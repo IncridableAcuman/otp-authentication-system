@@ -1,9 +1,30 @@
 server:
-  port: 8080
+  port: ${PORT}
 
 spring:
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: ${SMTP_USER}
+    password: ${SMTP_PASS}
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
   data:
+    redis:
+      host: localhost
+      port: 6379
+      username: admin
+      password: admin
+    rabbitmq:
+      host: localhost
+      port: 5672
+      username: admin
+      password: admin
     mongodb:
       host: localhost
       port: 27017
-      database: authentication
+      database: ${DB_NAME}
