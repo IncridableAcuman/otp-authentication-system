@@ -28,3 +28,9 @@ spring:
       host: localhost
       port: 27017
       database: ${DB_NAME}
+
+
+jwt:
+  secret: ${JWT_SECRET}
+  access_time: ${JWT_ACCESS_VALIDITY}
+  refresh_time: ${REFRESH_TOKEN_VALIDITY}
