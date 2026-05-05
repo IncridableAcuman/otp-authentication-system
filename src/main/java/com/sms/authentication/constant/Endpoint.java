@@ -1,4 +1,24 @@
 package com.sms.authentication.constant;
 
-public class Endpoint {
+import lombok.experimental.UtilityClass;
+
+@UtilityClass
+public final class Endpoint {
+//    authentication
+    public static final String STAR = "/**";
+    public static final String AUTHENTICATE = "/api/v1/auth";
+    public static final String ADMIN = "/admin";
+    public static final String STARTING_ENDPOINT = "/api/v1";
+    public static final String REGISTER = "/register";
+    public static final String LOGIN = "/login";
+    public static final String REFRESH = "/refresh";
+    public static final String LOGOUT = "/logout";
+    public static final String FORGOT_PASSWORD = "/forgot-password";
+    public static final String RESET_PASSWORD = "/reset-password";
+    public static final String VERIFY_EMAIL = "/verify-email";
+//    rabbit mq
+    public static final String QUEUE_NAME = "auth_queue";
+    public static final String EXCHANGE = "auth_exchange";
+    public static final String ROUTING_KEY = "auth_routing";
+
 }

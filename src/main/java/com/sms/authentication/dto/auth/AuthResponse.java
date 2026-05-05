@@ -1,4 +1,9 @@
 package com.sms.authentication.dto.auth;
 
-public record AuthResponse() {
+public record AuthResponse(
+        String token
+) {
+    public static AuthResponse from(String token){
+        return new AuthResponse(token);
+    }
 }
