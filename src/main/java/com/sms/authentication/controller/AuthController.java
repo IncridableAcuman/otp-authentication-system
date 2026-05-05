@@ -1,6 +1,7 @@
 package com.sms.authentication.controller;
 
 import com.sms.authentication.constant.Endpoint;
+import com.sms.authentication.constant.ResponseType;
 import com.sms.authentication.dto.auth.*;
 import com.sms.authentication.service.AuthService;
 import jakarta.servlet.http.HttpServletResponse;
@@ -16,9 +17,9 @@ public class AuthController {
     private final AuthService authService;
 
     @PostMapping(Endpoint.REGISTER)
-    public ResponseEntity<String> register(@Valid @RequestBody RegisterRequest request){
+    public ResponseEntity<ResponseType> register(@Valid @RequestBody RegisterRequest request){
         authService.register(request);
-        return ResponseEntity.ok("Check your email");
+        return ResponseEntity.ok(ResponseType.CHECK_EMAIL);
     }
     @PostMapping(Endpoint.LOGIN)
     public ResponseEntity<AuthResponse> login(@Valid @RequestBody AuthRequest request, HttpServletResponse response){
@@ -29,23 +30,23 @@ public class AuthController {
         return ResponseEntity.ok(authService.refresh(token,response));
     }
     @PostMapping(Endpoint.LOGOUT)
-    public ResponseEntity<String> logout(@CookieValue(name = "token",required = false) String token,HttpServletResponse response){
+    public ResponseEntity<ResponseType> logout(@CookieValue(name = "token",required = false) String token,HttpServletResponse response){
         authService.logout(token,response);
-        return ResponseEntity.ok("Logged out successfully");
+        return ResponseEntity.ok(ResponseType.LOGGED_OUT);
     }
     @PostMapping(Endpoint.FORGOT_PASSWORD)
-    public ResponseEntity<String> forgotPassword(@Valid @RequestBody ForgotPasswordRequest request){
+    public ResponseEntity<ResponseType> forgotPassword(@Valid @RequestBody ForgotPasswordRequest request){
         authService.forgotPassword(request);
-        return ResponseEntity.ok("Reset password link sent to email");
+        return ResponseEntity.ok(ResponseType.RESET_PASSWORD_LINK);
     }
     @PutMapping(Endpoint.RESET_PASSWORD)
-    public ResponseEntity<String> resetPassword(@Valid @RequestBody ResetPasswordRequest request){
+    public ResponseEntity<ResponseType> resetPassword(@Valid @RequestBody ResetPasswordRequest request){
         authService.resetPassword(request);
-        return ResponseEntity.ok("Password updated successfully");
+        return ResponseEntity.ok(ResponseType.UPDATE_PASSWORD);
     }
     @GetMapping(Endpoint.VERIFY_EMAIL)
-    public ResponseEntity<String> verifyEmail(@RequestParam String otp){
+    public ResponseEntity<ResponseType> verifyEmail(@RequestParam String otp){
         authService.activateUserAndCheckOtp(otp);
-        return ResponseEntity.ok("Successfully");
+        return ResponseEntity.ok(ResponseType.SUCCESS);
     }
 }
