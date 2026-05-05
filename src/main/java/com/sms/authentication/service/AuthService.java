@@ -1,5 +1,6 @@
 package com.sms.authentication.service;
 
+import com.sms.authentication.constant.ResponseType;
 import com.sms.authentication.dto.auth.*;
 import com.sms.authentication.dto.mail.EmailPayload;
 import com.sms.authentication.entity.OtpEntity;
@@ -64,10 +65,10 @@ public class AuthService {
     public AuthResponse login(AuthRequest request,HttpServletResponse response){
         User user = findUserByEmail(request.getEmail());
         if (!user.isActive()){
-            throw new CustomBadRequestException("User not activated");
+            throw new CustomBadRequestException(ResponseType.INACTIVE_USER.getMessage());
         }
         if (!passwordEncoder.matches(request.getPassword(), user.getPassword())){
-            throw new CustomBadRequestException("Password incorrect");
+            throw new CustomBadRequestException(ResponseType.INCORRECT_PASSWORD.getMessage());
         }
         String accessToken = jwtUtil.generateAccessToken(user);
         String refreshToken = jwtUtil.generateRefreshToken(user);
@@ -81,7 +82,7 @@ public class AuthService {
         User user = findUserByEmail(email);
         String cacheToken = redisService.getToken(user.getId());
         if (!cacheToken.equals(token)){
-            throw new CustomBadRequestException("Invalid token");
+            throw new CustomBadRequestException(ResponseType.INVALID_TOKEN.getMessage());
         }
         redisService.removeTokenFromCache(user.getId());
         String newAccessToken = jwtUtil.generateAccessToken(user);
@@ -95,7 +96,7 @@ public class AuthService {
         User user = findUserByEmail(email);
         String cacheToken = redisService.getToken(user.getId());
         if (!cacheToken.equals(token)){
-            throw new CustomBadRequestException("Invalid token");
+            throw new CustomBadRequestException(ResponseType.INVALID_TOKEN.getMessage());
         }
         cookieUtil.clearCookie(response);
         redisService.removeTokenFromCache(user.getId());
@@ -113,13 +114,13 @@ public class AuthService {
                         user,
                 url
         );
-        EmailPayload payload = new EmailPayload(user.getEmail(),"Reset Password",html);
+        EmailPayload payload = new EmailPayload(user.getEmail(),ResponseType.RESET_PASSWORD.getMessage(), html);
         rabbitMQProducer.sendMailWithRabbitMQ(payload);
     }
 
     public void resetPassword(ResetPasswordRequest request){
         if (request.getPassword().equals(request.getConfirmPassword())){
-            throw new CustomBadRequestException("Password and confirm password must be equal");
+            throw new CustomBadRequestException(ResponseType.PASSWORD_EQUAL_CONFIRM_PASSWORD.getMessage());
         }
         String email = jwtUtil.extractSubject(request.getToken());
         User user = findUserByEmail(email);
@@ -132,21 +133,21 @@ public class AuthService {
         assert authentication != null;
         User user = (User) authentication.getPrincipal();
         assert user != null;
-        OtpEntity otpEntity = otpRepository.findByUserId(user.getId()).orElseThrow(()-> new CustomNotFoundException("Otp not found with user id"));
+        OtpEntity otpEntity = otpRepository.findByUserId(user.getId()).orElseThrow(()-> new CustomNotFoundException(ResponseType.OTP_NOT_FOUND.getMessage()));
         if (!otpEntity.getOtp().equals(otp) || !otpEntity.getExpiration().before(new Date())){
-            throw new CustomBadRequestException("Otp incorrect");
+            throw new CustomBadRequestException(ResponseType.INCORRECT_OTP.getMessage());
         }
         user.setActive(true);
         saveUser(user);
     }
 
     public User findUserByEmail(String email){
-        return userRepository.findByEmail(email).orElseThrow(()-> new CustomNotFoundException("User not found"));
+        return userRepository.findByEmail(email).orElseThrow(()-> new CustomNotFoundException(ResponseType.USER_NOT_FOUND.getMessage()));
     }
 
     public void existUserByEmail(String email){
         if (userRepository.findByEmail(email).isPresent()){
-            throw new CustomBadRequestException("User already exist");
+            throw new CustomBadRequestException(ResponseType.EXIST_USER.getMessage());
         }
     }
 
