@@ -1,5 +1,6 @@
 package com.sms.authentication.config;
 
+import com.sms.authentication.constant.Endpoint;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.cors.CorsConfiguration;
@@ -21,7 +22,7 @@ public class CorsConfig {
         configuration.setExposedHeaders(List.of("*"));
         configuration.setAllowedMethods(List.of("*"));
 
-        source.registerCorsConfiguration("/**",configuration);
+        source.registerCorsConfiguration(Endpoint.STAR,configuration);
 
         return source;
     }
