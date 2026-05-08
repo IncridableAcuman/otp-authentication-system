@@ -6,9 +6,11 @@ import lombok.Getter;
 public enum ResponseType {
     SUCCESS("Successfully"),
     USER_NOT_FOUND("User not found"),
+    VERIFY_USER("User already verified"),
     EXIST_USER("User already exist"),
     INCORRECT_OTP("Incorrect otp"),
     OTP_NOT_FOUND("Otp not found with user id"),
+    OTP_EXPIRED("OTP expired"),
     PASSWORD_EQUAL_CONFIRM_PASSWORD("Password and confirm password must be equal"),
     INVALID_TOKEN("Invalid token"),
     INCORRECT_PASSWORD("Password incorrect"),

@@ -2,3 +2,6 @@
 .dockerignore
 .gitignore
 target
+.mvn
+docker-compose.yaml
+Dockerfile
