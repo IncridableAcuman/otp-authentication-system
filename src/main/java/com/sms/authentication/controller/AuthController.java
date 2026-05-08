@@ -44,9 +44,10 @@ public class AuthController {
         authService.resetPassword(request);
         return ResponseEntity.ok(ResponseType.UPDATE_PASSWORD);
     }
+
     @GetMapping(Endpoint.VERIFY_EMAIL)
-    public ResponseEntity<ResponseType> verifyEmail(@RequestParam String otp){
-        authService.activateUserAndCheckOtp(otp);
+    public ResponseEntity<ResponseType> verifyEmail(@RequestParam String token,@RequestParam String otp){
+        authService.verifyEmail(token,otp);
         return ResponseEntity.ok(ResponseType.SUCCESS);
     }
 }

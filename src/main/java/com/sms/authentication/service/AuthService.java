@@ -16,13 +16,12 @@ import com.sms.authentication.util.JwtUtil;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
+import java.util.Random;
 
 @Service
 @RequiredArgsConstructor
@@ -50,13 +49,19 @@ public class AuthService {
         user.setActive(false);
         saveUser(user);
 
-        String  otp = String.valueOf(Math.toIntExact(Math.round(Math.random() * 1000000)));
+        String  otp = String.format("%06d",new Random().nextInt(999999));
         OtpEntity otpEntity = new OtpEntity();
         otpEntity.setOtp(otp);
         otpEntity.setUserId(user.getId());
         otpEntity.setExpiration(new Date(System.currentTimeMillis() + accessTime));
         otpRepository.save(otpEntity);
-        EmailPayload payload = new EmailPayload(user.getEmail(), "OTP",otp);
+        String token = jwtUtil.generateAccessToken(user);
+        String url = "http://localhost:5173/verify-email?token=" + token;
+        String html = """
+        <h2>Your OTP: %s</h2>
+        <a href="%s">Verify Email</a>
+        """.formatted(otp, url);
+        EmailPayload payload = new EmailPayload(user.getEmail(), "Verify Email",html);
 
         rabbitMQProducer
                 .sendMailWithRabbitMQ(payload);
@@ -128,14 +133,19 @@ public class AuthService {
         saveUser(user);
     }
 
-    public void activateUserAndCheckOtp(String otp){
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        assert authentication != null;
-        User user = (User) authentication.getPrincipal();
-        assert user != null;
+    public void verifyEmail(String token,String otp){
+        String email = jwtUtil.extractSubject(token);
+        if (!jwtUtil.validateToken(token,email)){
+            throw new CustomBadRequestException(ResponseType.INVALID_TOKEN.getMessage());
+        }
+        User user = findUserByEmail(email);
         OtpEntity otpEntity = otpRepository.findByUserId(user.getId()).orElseThrow(()-> new CustomNotFoundException(ResponseType.OTP_NOT_FOUND.getMessage()));
-        if (!otpEntity.getOtp().equals(otp) || !otpEntity.getExpiration().before(new Date())){
+
+        if (!otpEntity.getOtp().equals(otp)){
             throw new CustomBadRequestException(ResponseType.INCORRECT_OTP.getMessage());
+        }
+        if (otpEntity.getExpiration().before(new Date())){
+            throw new CustomBadRequestException(ResponseType.OTP_EXPIRED.getMessage());
         }
         user.setActive(true);
         saveUser(user);

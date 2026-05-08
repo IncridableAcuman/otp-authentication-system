@@ -1,4 +1,6 @@
-FROM ubuntu:latest
+FROM eclipse-temurin:latest
 LABEL authors="izzatbek"
+WORKDIR /app
 
-ENTRYPOINT ["top", "-b"]
+
+ENTRYPOINT ["java", "-jar", "app.jar"]
