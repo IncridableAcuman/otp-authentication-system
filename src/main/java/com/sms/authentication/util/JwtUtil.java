@@ -50,8 +50,8 @@ public class JwtUtil {
 
         return Jwts
                 .builder()
-                .setSubject(user.getEmail())
                 .setClaims(claims)
+                .setSubject(user.getEmail())
                 .setIssuedAt(issueAt)
                 .setExpiration(expiration)
                 .signWith(secretKey)

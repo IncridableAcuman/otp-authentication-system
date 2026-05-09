@@ -27,7 +27,7 @@ import java.util.Random;
 @RequiredArgsConstructor
 public class AuthService {
     @Value("${jwt.access_time}")
-    private long accessTime;
+    private int accessTime;
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
@@ -116,7 +116,6 @@ public class AuthService {
                 <button>Click here</button>
                 </div>
                 """.formatted(
-                        user,
                 url
         );
         EmailPayload payload = new EmailPayload(user.getEmail(),ResponseType.RESET_PASSWORD.getMessage(), html);
@@ -149,6 +148,7 @@ public class AuthService {
         }
         user.setActive(true);
         saveUser(user);
+        otpRepository.delete(otpEntity);
     }
 
     public User findUserByEmail(String email){
