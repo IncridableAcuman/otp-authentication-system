@@ -17,8 +17,5 @@ public final class Endpoint {
     public static final String RESET_PASSWORD = "/reset-password";
     public static final String VERIFY_EMAIL = "/verify-email";
 //    rabbit mq
-    public static final String QUEUE_NAME = "auth_queue";
-    public static final String EXCHANGE = "auth_exchange";
-    public static final String ROUTING_KEY = "auth_routing";
 
 }

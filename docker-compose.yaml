@@ -6,7 +6,7 @@ services:
     env_file:
       - .env
     ports:
-      - "8080:8080"
+      - "${PORT}:${PORT}"
     depends_on:
       - mongodb
       - redis
@@ -16,7 +16,7 @@ services:
     container_name: redis
     restart: always
   rabbitmq:
-    image: rabbitmq:latest
+    image: rabbitmq:3-management
     container_name: rabbitmq
     restart: always
   mongodb:
