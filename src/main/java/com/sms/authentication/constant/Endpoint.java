@@ -16,6 +16,10 @@ public final class Endpoint {
     public static final String FORGOT_PASSWORD = "/forgot-password";
     public static final String RESET_PASSWORD = "/reset-password";
     public static final String VERIFY_EMAIL = "/verify-email";
+<<<<<<< HEAD
+
+=======
 //    rabbit mq
+>>>>>>> develop
 
 }

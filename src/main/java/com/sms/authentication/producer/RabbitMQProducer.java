@@ -5,8 +5,13 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.stereotype.Component;
 
+<<<<<<< HEAD
+import static com.sms.authentication.config.RabbitMQConfig.EXCHANGE;
+import static com.sms.authentication.config.RabbitMQConfig.ROUTING_KEY;
+=======
 import static com.sms.authentication.config.RabbitMQConfig.*;
 
+>>>>>>> develop
 
 @Component
 @RequiredArgsConstructor
